@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel - Star Nails</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="img/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-admin">
+
+  <header class="admin-encabezado">
+    <img src="img/logo.png" alt="Star Nails">
+    <h1>Panel</h1>
+    <button class="boton-salir" id="botonSalir">Cerrar sesión</button>
+  </header>
+
+  <p class="admin-alerta" id="alertaConfig">
+    Falta configurar Firebase: pegá los datos de tu proyecto en el archivo firebase-config.js
+  </p>
+
+  <section class="login" id="login">
+    <h2>Entrar al panel</h2>
+    <p>Solo para la dueña de la tienda.</p>
+
+    <form id="formLogin">
+      <label for="email">Email</label>
+      <input type="email" id="email" required autocomplete="username">
+
+      <label for="clave">Contraseña</label>
+      <input type="password" id="clave" required autocomplete="current-password">
+
+      <button type="submit" class="boton-rosa-ancho" id="botonEntrar">Entrar</button>
+      <p class="login-error" id="loginError"></p>
+    </form>
+  </section>
+
+  <main class="panel" id="panel">
+
+    <button class="boton-nuevo-producto" id="abrirFormulario">+ Agregar producto</button>
+
+    <form class="form-producto" id="formProducto">
+      <h2>Producto nuevo</h2>
+
+      <div class="form-grilla">
+        <label class="campo-foto" for="fotoProducto">
+          <img id="vistaFoto" alt="Vista previa de la foto">
+          <span id="textoFoto">Tocá acá para elegir la foto</span>
+          <input type="file" id="fotoProducto" accept="image/*">
+        </label>
+
+        <div class="form-campos">
+          <label for="nombreProducto">Nombre</label>
+          <input type="text" id="nombreProducto" maxlength="80" placeholder="Ej: Esmalte Meline Rosa">
+
+          <label for="categoriaProducto">Categoría</label>
+          <select id="categoriaProducto">
+          </select>
+          <input type="text" id="categoriaNueva" maxlength="40" placeholder="Nombre de la categoría nueva">
+
+          <label for="precioProducto">Precio</label>
+          <input type="number" id="precioProducto" min="1" placeholder="Ej: 8500">
+
+          <label for="notaProducto">Nota <small>(opcional)</small></label>
+          <input type="text" id="notaProducto" maxlength="80" placeholder="Ej: Precio por unidad">
+
+          <label for="opcionesProducto">Colores, medidas o formas <small>(opcional)</small></label>
+          <input type="text" id="opcionesProducto" placeholder="Separados por coma. Ej: Rojo, Rosa, Nude">
+        </div>
+      </div>
+
+      <div class="form-botones">
+        <button type="button" class="boton-cancelar" id="cancelarFormulario">Cancelar</button>
+        <button type="submit" class="boton-rosa-ancho" id="guardarProducto">Guardar producto</button>
+      </div>
+    </form>
+
+    <div class="panel-arriba">
+      <p class="panel-resumen" id="resumen"></p>
+      <input type="search" id="buscarAdmin" class="buscador" placeholder="Buscar producto..." aria-label="Buscar producto">
+      <select id="filtroCategoria" aria-label="Filtrar por categoría">
+      </select>
+    </div>
+
+    <p class="panel-ayuda" id="ayudaLista">
+      Tocá el interruptor para marcar si hay stock. Para cambiar un precio, escribilo y tocá "Guardar".
+      Los cambios se ven en la tienda al instante.
+    </p>
+
+    <div class="lista-admin" id="listaAdmin">
+    </div>
+  </main>
+
+  <div class="aviso" id="aviso">Guardado</div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="productos.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

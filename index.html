@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Star Nails - Insumos de uñas</title>
+  <meta name="description" content="Star Nails: insumos de uñas. Esmaltes, geles, tips, herramientas y más. Armá tu pedido y mandalo por WhatsApp.">
+  <link rel="icon" href="img/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="encabezado">
+    <div class="barra">
+      <button class="boton-menu" id="abrirMenu" aria-label="Abrir menú de categorías">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <a href="#inicio" class="marca">
+        <img src="img/logo.png" alt="Star Nails">
+      </a>
+
+      <button class="boton-carrito" id="abrirCarrito" aria-label="Abrir carrito">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        <span class="contador" id="contador">0</span>
+      </button>
+    </div>
+
+    <nav class="pestanas" aria-label="Secciones">
+      <a href="#inicio" class="pestana activa">Inicio</a>
+      <a href="#productos" class="pestana">Productos</a>
+      <a href="#contacto" class="pestana">Contacto</a>
+    </nav>
+  </header>
+
+  <aside class="menu" id="menu" aria-label="Categorías">
+    <div class="menu-arriba">
+      <img src="img/logo.png" alt="Star Nails">
+      <button class="cerrar" id="cerrarMenu" aria-label="Cerrar menú">✕</button>
+    </div>
+
+    <p class="menu-titulo">Categorías</p>
+    <ul class="menu-lista" id="menuLista">
+    </ul>
+
+    <a href="https://wa.me/5492262510921" target="_blank" class="menu-whatsapp">Consultas por WhatsApp</a>
+  </aside>
+
+  <section class="carrusel" id="inicio" aria-label="Destacados">
+    <div class="carrusel-pista" id="pista">
+
+      <div class="slide">
+        <img src="img/esmaltes-meline.jpg" alt="" class="slide-fondo">
+        <img src="img/esmaltes-meline.jpg" alt="Muestras de esmaltes Meline" class="slide-foto">
+        <div class="slide-texto">
+          <h2>Esmaltes Meline</h2>
+          <p>19 colores para elegir</p>
+          <button onclick="elegirCategoria('Esmaltes')">Ver esmaltes</button>
+        </div>
+      </div>
+
+      <div class="slide">
+        <img src="img/tips-paris-prelimados.jpg" alt="" class="slide-fondo">
+        <img src="img/tips-paris-prelimados.jpg" alt="Tips Paris Night" class="slide-foto">
+        <div class="slide-texto">
+          <h2>Tips Paris Night</h2>
+          <p>Almendra, stiletto y cuadrado</p>
+          <button onclick="elegirCategoria('Tips')">Ver tips</button>
+        </div>
+      </div>
+
+      <div class="slide">
+        <img src="img/esmaltes-rimera.jpg" alt="" class="slide-fondo">
+        <img src="img/esmaltes-rimera.jpg" alt="Muestras de esmaltes Rimera cat eyes" class="slide-foto">
+        <div class="slide-texto">
+          <h2>Rimera Cat Eyes</h2>
+          <p>Efecto ojo de gato</p>
+          <button onclick="elegirCategoria('Esmaltes')">Ver esmaltes</button>
+        </div>
+      </div>
+
+      <div class="slide">
+        <img src="img/torno.jpg" alt="" class="slide-fondo">
+        <img src="img/torno.jpg" alt="Torno inalámbrico" class="slide-foto">
+        <div class="slide-texto">
+          <h2>Torno inalámbrico</h2>
+          <p>Y todo para tu mesa de trabajo</p>
+          <button onclick="elegirCategoria('Equipos')">Ver equipos</button>
+        </div>
+      </div>
+
+      <div class="slide">
+        <img src="img/mix-caviar-perla.jpg" alt="" class="slide-fondo">
+        <img src="img/mix-caviar-perla.jpg" alt="Mix de caviar y media perla" class="slide-foto">
+        <div class="slide-texto">
+          <h2>Decoración</h2>
+          <p>Caviar, strass y polvos</p>
+          <button onclick="elegirCategoria('Decoración')">Ver decoración</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="puntos" id="puntos">
+      <button class="punto activo" onclick="irASlide(0)" aria-label="Foto 1"></button>
+      <button class="punto" onclick="irASlide(1)" aria-label="Foto 2"></button>
+      <button class="punto" onclick="irASlide(2)" aria-label="Foto 3"></button>
+      <button class="punto" onclick="irASlide(3)" aria-label="Foto 4"></button>
+      <button class="punto" onclick="irASlide(4)" aria-label="Foto 5"></button>
+    </div>
+  </section>
+
+  <main id="productos">
+    <div class="productos-arriba">
+      <h2 class="titulo-seccion" id="tituloSeccion">Todos los productos</h2>
+      <input type="search" id="buscador" class="buscador" placeholder="Buscar producto..." aria-label="Buscar producto">
+    </div>
+
+    <nav class="categorias" id="categorias" aria-label="Filtrar por categoría">
+    </nav>
+
+    <div class="grilla" id="grilla">
+    </div>
+
+    <p class="sin-resultados" id="sinResultados">No encontramos productos con ese nombre. Probá con otra palabra.</p>
+  </main>
+
+  <section class="como-comprar">
+    <h2>Cómo comprar</h2>
+    <ol class="pasos">
+      <li>
+        <span class="paso-num">1</span>
+        <h3>Elegí tus productos</h3>
+        <p>Tocá "Agregar" en lo que quieras. Si tiene colores o medidas, elegí la opción antes.</p>
+      </li>
+      <li>
+        <span class="paso-num">2</span>
+        <h3>Mandá el pedido</h3>
+        <p>Abrí el carrito y tocá "Enviar pedido por WhatsApp". El mensaje se arma solo.</p>
+      </li>
+      <li>
+        <span class="paso-num">3</span>
+        <h3>Coordinamos</h3>
+        <p>Te respondemos por WhatsApp para confirmar stock, forma de pago y entrega.</p>
+      </li>
+    </ol>
+  </section>
+
+  <footer class="contacto" id="contacto">
+    <img src="img/logo.png" alt="Star Nails" class="contacto-logo">
+    <h2>Contacto</h2>
+    <p>¿Dudas con un color, el stock o el envío? Escribinos.</p>
+    <a href="https://wa.me/5492262510921" target="_blank" class="boton-whatsapp-grande">WhatsApp: +54 9 2262 51-0921</a>
+    <p class="contacto-chico">Los precios pueden cambiar sin aviso.</p>
+  </footer>
+
+  <div class="fondo-oscuro" id="fondoOscuro"></div>
+
+  <aside class="carrito" id="carrito" aria-label="Carrito de compras">
+    <div class="carrito-arriba">
+      <h2>Tu pedido</h2>
+      <button class="cerrar" id="cerrarCarrito" aria-label="Cerrar carrito">✕</button>
+    </div>
+
+    <div class="carrito-lista" id="carritoLista">
+    </div>
+
+    <div class="carrito-abajo">
+      <label for="nombreCliente">Nombre y apellido</label>
+      <input type="text" id="nombreCliente" placeholder="Ej: Sofía Pérez" autocomplete="name" maxlength="60">
+
+      <label for="direccionCliente">Dirección de entrega</label>
+      <div class="campo-con-boton">
+        <input type="text" id="direccionCliente" placeholder="Calle, número y ciudad" autocomplete="street-address" maxlength="120">
+        <button type="button" id="usarUbicacion" aria-label="Agregar mi ubicación exacta" title="Agregar mi ubicación exacta">📍</button>
+      </div>
+      <p class="ayuda-direccion" id="ayudaDireccion">Con el 📍 podés sumar tu ubicación exacta (opcional).</p>
+      <a href="#" id="verMapa" class="ver-mapa" target="_blank">Ver en Google Maps</a>
+
+      <div class="total">
+        <span>Total</span>
+        <strong id="total">$0</strong>
+      </div>
+
+      <div class="verificacion" id="verificacion">
+        <label for="respuestaCaptcha" id="preguntaCaptcha">¿Cuánto es 3 + 4?</label>
+        <p>Es para comprobar que no sos un robot.</p>
+        <div class="campo-con-boton">
+          <input type="number" id="respuestaCaptcha" inputmode="numeric" placeholder="Resultado">
+          <button type="button" id="confirmarCaptcha">Confirmar</button>
+        </div>
+      </div>
+
+      <button class="boton-whatsapp" id="enviarPedido">Enviar pedido por WhatsApp</button>
+      <button class="vaciar" id="vaciarCarrito">Vaciar carrito</button>
+    </div>
+  </aside>
+
+  <div class="aviso" id="aviso">Agregado al carrito</div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="productos.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
