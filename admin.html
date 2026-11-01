@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -70,8 +70,19 @@
           <label for="notaProducto">Nota <small>(opcional)</small></label>
           <input type="text" id="notaProducto" maxlength="80" placeholder="Ej: Precio por unidad">
 
-          <label for="opcionesProducto">Colores, medidas o formas <small>(opcional)</small></label>
-          <input type="text" id="opcionesProducto" placeholder="Separados por coma. Ej: Rojo, Rosa, Nude">
+          <label for="tipoOpcionProducto">¿El cliente tiene que elegir algo? <small>(opcional)</small></label>
+          <select id="tipoOpcionProducto">
+            <option value="">No, no tiene opciones</option>
+            <option>Color</option>
+            <option>Forma</option>
+            <option>Medida</option>
+            <option>Modelo</option>
+          </select>
+
+          <div id="campoOpciones">
+            <label for="opcionesProducto">Opciones</label>
+            <input type="text" id="opcionesProducto" placeholder="Separadas por coma. Ej: Almendra, Coffin, Cuadrado">
+          </div>
         </div>
       </div>
 

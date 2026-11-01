@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  font-family: "Figtree", Arial, sans-serif;
+  font-family: "Montserrat", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: var(--tinta);
@@ -291,8 +291,8 @@ select:focus-visible {
 }
 
 .slide-texto h2 {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 32px;
   line-height: 1.05;
 }
@@ -347,8 +347,8 @@ select:focus-visible {
 }
 
 .titulo-seccion {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 34px;
   line-height: 1.1;
   scroll-margin-top: 140px;
@@ -426,17 +426,23 @@ select:focus-visible {
   border-bottom: 2px solid var(--tinta);
 }
 
+.tarjeta-chip {
+  align-self: center;
+  padding: 2px 12px;
+  border: 1.5px solid var(--gris);
+  border-radius: 999px;
+  color: var(--gris);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 .precio {
-  position: absolute;
-  right: 10px;
-  bottom: 12px;
-  padding: 4px 12px;
-  border: 2px solid var(--tinta);
-  border-radius: 8px;
-  background: var(--rosa-suave);
-  font-family: "Bagel Fat One", cursive;
-  font-size: 20px;
-  transform: rotate(-3deg);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .sin-stock-etiqueta {
@@ -454,20 +460,32 @@ select:focus-visible {
 .tarjeta-info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
-  padding: 14px;
+  padding: 16px 14px 14px;
+  text-align: center;
 }
 
 .tarjeta-info h3 {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .tarjeta-info .nota {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--gris);
+}
+
+.opcion-titulo {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .tarjeta-info select {
@@ -481,6 +499,9 @@ select:focus-visible {
 
 .boton-agregar {
   margin-top: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 14px;
   padding: 10px;
   border: 2px solid var(--tinta);
   border-radius: 999px;
@@ -516,8 +537,8 @@ select:focus-visible {
 .como-comprar h2 {
   max-width: 1200px;
   margin: 0 auto 32px;
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 36px;
   color: var(--rosa-suave);
 }
@@ -539,7 +560,8 @@ select:focus-visible {
   margin-bottom: 12px;
   border-radius: 50%;
   background: var(--rosa-fuerte);
-  font-family: "Bagel Fat One", cursive;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 22px;
 }
 
@@ -566,8 +588,8 @@ select:focus-visible {
 }
 
 .contacto h2 {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 34px;
 }
 
@@ -639,8 +661,8 @@ select:focus-visible {
 }
 
 .carrito-arriba h2 {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 26px;
 }
 
@@ -756,8 +778,8 @@ select:focus-visible {
 }
 
 .total strong {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 28px;
 }
 
@@ -890,17 +912,23 @@ select:focus-visible {
   }
 
   .tarjeta-info h3 {
-    font-size: 15px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
   }
 
   .precio {
-    font-size: 16px;
-    padding: 3px 8px;
+    font-size: 19px;
+  }
+
+  .tarjeta-chip {
+    font-size: 10px;
+    padding: 2px 8px;
   }
 
   .boton-agregar {
-    padding: 8px;
-    font-size: 15px;
+    padding: 10px 4px;
+    font-size: 11px;
+    letter-spacing: 0.02em;
   }
 
   .pasos {
@@ -939,8 +967,8 @@ select:focus-visible {
 }
 
 .admin-encabezado h1 {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 28px;
 }
 
@@ -982,8 +1010,8 @@ select:focus-visible {
 }
 
 .login h2 {
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 30px;
 }
 
@@ -1054,7 +1082,8 @@ select:focus-visible {
 
 .panel-resumen {
   flex: 1 1 100%;
-  font-family: "Bagel Fat One", cursive;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 24px;
 }
 
@@ -1282,8 +1311,8 @@ select:focus-visible {
 
 .form-producto h2 {
   margin-bottom: 16px;
-  font-family: "Bagel Fat One", cursive;
-  font-weight: 400;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
   font-size: 26px;
 }
 

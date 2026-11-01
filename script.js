@@ -22,6 +22,17 @@ function formatoPrecio(numero) {
   return "$" + numero.toLocaleString("es-AR");
 }
 
+function plural(tipo, cantidad) {
+  const palabra = tipo.toLowerCase();
+  if (cantidad === 1) {
+    return palabra;
+  }
+  if (palabra === "color") {
+    return "colores";
+  }
+  return palabra + "s";
+}
+
 function todosLosProductos() {
   return productosNuevos.concat(productos);
 }
@@ -132,6 +143,7 @@ function cargarProductosNuevos(resultado) {
       imagen: datos.imagen,
       nota: datos.nota,
       opciones: datos.opciones,
+      tipoOpcion: datos.tipoOpcion,
       stock: datos.stock,
       esNuevo: Date.now() - datos.creado < treintaDias
     });
@@ -228,8 +240,13 @@ function mostrarProductos() {
     const conStock = hayStock(p);
 
     let selectHTML = "";
+    let chipHTML = "";
     if (p.opciones && p.opciones.length > 0) {
-      selectHTML = '<select id="opcion-' + p.id + '" aria-label="Elegir opción">';
+      const tipo = p.tipoOpcion || "Modelo";
+      chipHTML = '<span class="tarjeta-chip">' + p.opciones.length + " " + plural(tipo, p.opciones.length) + "</span>";
+
+      selectHTML = '<label class="opcion-titulo" for="opcion-' + p.id + '">' + tipo + ":</label>";
+      selectHTML += '<select id="opcion-' + p.id + '">';
       for (let j = 0; j < p.opciones.length; j++) {
         selectHTML += "<option>" + p.opciones[j] + "</option>";
       }
@@ -254,14 +271,15 @@ function mostrarProductos() {
       '<div class="tarjeta-foto">' +
         '<img src="' + fotoDe(p) + '" alt="' + p.nombre + '" loading="lazy">' +
         etiquetaHTML +
-        '<span class="precio">' + formatoPrecio(p.precio) + "</span>" +
       "</div>" +
       '<div class="tarjeta-info">' +
+        chipHTML +
         "<h3>" + p.nombre + "</h3>" +
         notaHTML +
+        '<p class="precio">' + formatoPrecio(p.precio) + "</p>" +
         selectHTML +
         "<button class=\"boton-agregar\" onclick=\"agregarAlCarrito('" + p.id + "')\" " + (conStock ? "" : "disabled") + ">" +
-          (conStock ? "Agregar" : "Sin stock") +
+          (conStock ? "Agregar al carrito" : "Sin stock") +
         "</button>" +
       "</div>";
 

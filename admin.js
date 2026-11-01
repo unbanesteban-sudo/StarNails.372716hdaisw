@@ -24,6 +24,8 @@ const categoriaNueva = document.getElementById("categoriaNueva");
 const precioProducto = document.getElementById("precioProducto");
 const notaProducto = document.getElementById("notaProducto");
 const opcionesProducto = document.getElementById("opcionesProducto");
+const tipoOpcionProducto = document.getElementById("tipoOpcionProducto");
+const campoOpciones = document.getElementById("campoOpciones");
 const guardarProducto = document.getElementById("guardarProducto");
 
 let estado = {};
@@ -386,7 +388,17 @@ function limpiarFormulario() {
   vistaFoto.style.display = "none";
   textoFoto.textContent = "Tocá acá para elegir la foto";
   categoriaNueva.style.display = "none";
+  campoOpciones.style.display = "none";
 }
+
+tipoOpcionProducto.onchange = function () {
+  if (tipoOpcionProducto.value === "") {
+    campoOpciones.style.display = "none";
+  } else {
+    campoOpciones.style.display = "block";
+    opcionesProducto.focus();
+  }
+};
 
 abrirFormulario.onclick = function () {
   limpiarFormulario();
@@ -492,13 +504,22 @@ formProducto.onsubmit = function (evento) {
     return;
   }
 
+  const tipoOpcion = tipoOpcionProducto.value;
   const opciones = [];
-  const partes = opcionesProducto.value.split(",");
+  let partes = [];
+  if (tipoOpcion !== "") {
+    partes = opcionesProducto.value.split(",");
+  }
   for (let i = 0; i < partes.length; i++) {
     const opcion = partes[i].trim();
     if (opcion !== "") {
       opciones.push(opcion);
     }
+  }
+
+  if (tipoOpcion !== "" && opciones.length === 0) {
+    mostrarAviso("Escribí las opciones separadas por coma");
+    return;
   }
 
   guardarProducto.disabled = true;
@@ -510,6 +531,7 @@ formProducto.onsubmit = function (evento) {
     precio: precio,
     nota: nota,
     opciones: opciones,
+    tipoOpcion: tipoOpcion,
     imagen: fotoComprimida,
     stock: true,
     creado: Date.now()
