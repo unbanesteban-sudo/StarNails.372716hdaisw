@@ -16,8 +16,10 @@ const formProducto = document.getElementById("formProducto");
 const abrirFormulario = document.getElementById("abrirFormulario");
 const cancelarFormulario = document.getElementById("cancelarFormulario");
 const fotoProducto = document.getElementById("fotoProducto");
-const vistaFoto = document.getElementById("vistaFoto");
-const textoFoto = document.getElementById("textoFoto");
+const fotosElegidas = document.getElementById("fotosElegidas");
+const ventanaFotos = document.getElementById("ventanaFotos");
+const listaFotos = document.getElementById("listaFotos");
+const subirFotosExtra = document.getElementById("subirFotosExtra");
 const nombreProducto = document.getElementById("nombreProducto");
 const categoriaProducto = document.getElementById("categoriaProducto");
 const categoriaNueva = document.getElementById("categoriaNueva");
@@ -30,7 +32,10 @@ const guardarProducto = document.getElementById("guardarProducto");
 
 let estado = {};
 let productosNuevos = [];
-let fotoComprimida = "";
+let fotosNuevas = [];
+let fotosExtra = {};
+let productoFotos = null;
+const MAXIMO_FOTOS = 6;
 
 let db;
 let auth;
@@ -51,6 +56,10 @@ function buscarProducto(id) {
     }
   }
   return null;
+}
+
+function extrasDe(producto) {
+  return fotosExtra[String(producto.id)] || [];
 }
 
 function fotoDe(producto) {
@@ -140,6 +149,14 @@ function cargarDatos() {
           imagen: datos.imagen,
           stock: datos.stock
         });
+      });
+
+      return db.collection("fotos").get();
+    })
+    .then(function (resultado) {
+      fotosExtra = {};
+      resultado.forEach(function (documento) {
+        fotosExtra[documento.id] = documento.data().lista || [];
       });
 
       cargarSelectsCategorias();
@@ -242,6 +259,11 @@ function borrarProducto(id) {
   }
 
   promesa
+    .then(function () {
+      if (producto.nuevo && extrasDe(producto).length > 0) {
+        return db.collection("fotos").doc(producto.id).delete();
+      }
+    })
     .then(function () {
       mostrarAviso("Producto borrado ✓");
       cargarDatos();
@@ -359,6 +381,7 @@ function mostrarLista() {
           '<span class="interruptor-boton"></span>' +
           '<span class="interruptor-texto" id="textoStock-' + p.id + '">' + (conStock ? "Hay stock" : "Sin stock") + "</span>" +
         "</label>" +
+        "<button class=\"boton-fotos\" onclick=\"abrirFotos('" + p.id + "')\" title=\"Fotos del producto\">📷 " + (1 + extrasDe(p).length) + "</button>" +
         "<button class=\"boton-borrar\" onclick=\"borrarProducto('" + p.id + "')\" aria-label=\"Borrar " + p.nombre + "\" title=\"Borrar producto\">🗑</button>";
     }
 
@@ -384,9 +407,8 @@ function mostrarLista() {
 
 function limpiarFormulario() {
   formProducto.reset();
-  fotoComprimida = "";
-  vistaFoto.style.display = "none";
-  textoFoto.textContent = "Tocá acá para elegir la foto";
+  fotosNuevas = [];
+  mostrarFotosElegidas();
   categoriaNueva.style.display = "none";
   campoOpciones.style.display = "none";
 }
@@ -422,8 +444,8 @@ categoriaProducto.onchange = function () {
 };
 
 function achicarFoto(imagen) {
-  const ancho = 480;
-  const alto = 600;
+  const ancho = 600;
+  const alto = 750;
 
   const lienzo = document.createElement("canvas");
   lienzo.width = ancho;
@@ -443,37 +465,185 @@ function achicarFoto(imagen) {
   ctx.fillRect(0, 0, ancho, alto);
   ctx.drawImage(imagen, x, y, recorteAncho, recorteAlto, 0, 0, ancho, alto);
 
-  return lienzo.toDataURL("image/jpeg", 0.75);
+  return lienzo.toDataURL("image/jpeg", 0.72);
 }
 
-fotoProducto.onchange = function () {
-  const archivo = fotoProducto.files[0];
-  if (!archivo) {
+function leerFotos(archivos, alTerminar) {
+  const resultado = [];
+  let pendientes = archivos.length;
+
+  if (pendientes === 0) {
+    alTerminar(resultado);
     return;
   }
 
-  textoFoto.textContent = "Cargando foto...";
-  const lector = new FileReader();
+  function terminarUna() {
+    pendientes--;
+    if (pendientes === 0) {
+      const listas = [];
+      for (let i = 0; i < resultado.length; i++) {
+        if (resultado[i]) {
+          listas.push(resultado[i]);
+        }
+      }
+      if (listas.length < archivos.length) {
+        mostrarAviso("Alguna foto no se pudo usar. Probá con JPG o PNG.");
+      }
+      alTerminar(listas);
+    }
+  }
 
-  lector.onload = function () {
-    const imagen = new Image();
+  for (let i = 0; i < archivos.length; i++) {
+    const lector = new FileReader();
 
-    imagen.onload = function () {
-      fotoComprimida = achicarFoto(imagen);
-      vistaFoto.src = fotoComprimida;
-      vistaFoto.style.display = "block";
-      textoFoto.textContent = "Tocá para cambiar la foto";
+    lector.onload = function () {
+      const imagen = new Image();
+      imagen.onload = function () {
+        resultado[i] = achicarFoto(imagen);
+        terminarUna();
+      };
+      imagen.onerror = terminarUna;
+      imagen.src = lector.result;
     };
+    lector.onerror = terminarUna;
 
-    imagen.onerror = function () {
-      textoFoto.textContent = "Ese formato no se puede usar. Probá con una foto JPG o PNG.";
-    };
+    lector.readAsDataURL(archivos[i]);
+  }
+}
 
-    imagen.src = lector.result;
-  };
+function mostrarFotosElegidas() {
+  let html = "";
+  for (let i = 0; i < fotosNuevas.length; i++) {
+    html += '<div class="foto-mini">' +
+      '<img src="' + fotosNuevas[i] + '" alt="Foto ' + (i + 1) + '">' +
+      (i === 0 ? '<span class="etiqueta-principal">Principal</span>' : "") +
+      '<button type="button" onclick="quitarFotoNueva(' + i + ')" aria-label="Quitar foto">✕</button>' +
+      "</div>";
+  }
+  fotosElegidas.innerHTML = html;
+}
 
-  lector.readAsDataURL(archivo);
+function quitarFotoNueva(numero) {
+  fotosNuevas.splice(numero, 1);
+  mostrarFotosElegidas();
+}
+
+fotoProducto.onchange = function () {
+  leerFotos(fotoProducto.files, function (nuevas) {
+    for (let i = 0; i < nuevas.length; i++) {
+      if (fotosNuevas.length < MAXIMO_FOTOS) {
+        fotosNuevas.push(nuevas[i]);
+      } else {
+        mostrarAviso("Máximo " + MAXIMO_FOTOS + " fotos por producto");
+      }
+    }
+    mostrarFotosElegidas();
+    fotoProducto.value = "";
+  });
 };
+
+function abrirFotos(id) {
+  productoFotos = buscarProducto(id);
+  document.getElementById("tituloFotos").textContent = productoFotos.nombre;
+  mostrarFotosProducto();
+  ventanaFotos.classList.add("abierto");
+  ventanaFotos.setAttribute("aria-hidden", "false");
+}
+
+function cerrarFotos() {
+  ventanaFotos.classList.remove("abierto");
+  ventanaFotos.setAttribute("aria-hidden", "true");
+}
+
+function mostrarFotosProducto() {
+  const extras = extrasDe(productoFotos);
+  let html = '<div class="foto-mini">' +
+    '<img src="' + fotoDe(productoFotos) + '" alt="Foto principal">' +
+    '<span class="etiqueta-principal">Principal</span>' +
+    "</div>";
+
+  for (let i = 0; i < extras.length; i++) {
+    html += '<div class="foto-mini">' +
+      '<img src="' + extras[i] + '" alt="Foto ' + (i + 2) + '">' +
+      '<button type="button" onclick="borrarFotoExtra(' + i + ')" aria-label="Borrar foto">✕</button>' +
+      "</div>";
+  }
+  listaFotos.innerHTML = html;
+}
+
+function guardarFotosExtra(lista) {
+  const id = String(productoFotos.id);
+  let promesa;
+
+  if (lista.length === 0) {
+    promesa = db.collection("fotos").doc(id).delete();
+  } else {
+    promesa = db.collection("fotos").doc(id).set({ lista: lista });
+  }
+
+  return promesa.then(function () {
+    fotosExtra[id] = lista;
+    mostrarFotosProducto();
+    mostrarLista();
+  });
+}
+
+subirFotosExtra.onchange = function () {
+  const lista = extrasDe(productoFotos).slice();
+
+  leerFotos(subirFotosExtra.files, function (nuevas) {
+    for (let i = 0; i < nuevas.length; i++) {
+      if (lista.length < MAXIMO_FOTOS) {
+        lista.push(nuevas[i]);
+      } else {
+        mostrarAviso("Máximo " + MAXIMO_FOTOS + " fotos extra por producto");
+      }
+    }
+    subirFotosExtra.value = "";
+
+    mostrarAviso("Subiendo fotos...");
+    guardarFotosExtra(lista)
+      .then(function () {
+        mostrarAviso("Fotos guardadas ✓ Ya se ven en la tienda");
+      })
+      .catch(function (error) {
+        console.log(error);
+        mostrarAviso("No se pudieron guardar. Revisá la conexión.");
+      });
+  });
+};
+
+function borrarFotoExtra(numero) {
+  if (!confirm("¿Borrar esta foto?")) {
+    return;
+  }
+
+  const lista = extrasDe(productoFotos).slice();
+  lista.splice(numero, 1);
+
+  guardarFotosExtra(lista)
+    .then(function () {
+      mostrarAviso("Foto borrada ✓");
+    })
+    .catch(function (error) {
+      console.log(error);
+      mostrarAviso("No se pudo borrar. Revisá la conexión.");
+    });
+}
+
+document.getElementById("cerrarFotos").onclick = cerrarFotos;
+
+ventanaFotos.onclick = function (evento) {
+  if (evento.target === ventanaFotos) {
+    cerrarFotos();
+  }
+};
+
+document.addEventListener("keydown", function (evento) {
+  if (evento.key === "Escape") {
+    cerrarFotos();
+  }
+});
 
 formProducto.onsubmit = function (evento) {
   evento.preventDefault();
@@ -487,8 +657,8 @@ formProducto.onsubmit = function (evento) {
     categoria = categoriaNueva.value.trim();
   }
 
-  if (fotoComprimida === "") {
-    mostrarAviso("Falta elegir la foto");
+  if (fotosNuevas.length === 0) {
+    mostrarAviso("Falta elegir al menos una foto");
     return;
   }
   if (nombre === "") {
@@ -532,10 +702,15 @@ formProducto.onsubmit = function (evento) {
     nota: nota,
     opciones: opciones,
     tipoOpcion: tipoOpcion,
-    imagen: fotoComprimida,
+    imagen: fotosNuevas[0],
     stock: true,
     creado: Date.now()
   })
+    .then(function (referencia) {
+      if (fotosNuevas.length > 1) {
+        return db.collection("fotos").doc("n-" + referencia.id).set({ lista: fotosNuevas.slice(1) });
+      }
+    })
     .then(function () {
       mostrarAviso("Producto agregado ✓ Ya se ve en la tienda");
       formProducto.style.display = "none";

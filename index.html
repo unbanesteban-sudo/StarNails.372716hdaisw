@@ -161,6 +161,12 @@
     <p class="contacto-chico">Los precios pueden cambiar sin aviso.</p>
   </footer>
 
+  <section class="promo-web">
+    <p class="promo-titulo">¿Tenés un emprendimiento y todavía no tenés web?</p>
+    <p class="promo-texto">Te armamos una como esta: con catálogo, carrito, pedidos por WhatsApp y un panel para manejar tus productos.</p>
+    <a href="https://wa.me/5492996259199?text=%C2%A1Hola!%20Vi%20la%20p%C3%A1gina%20de%20Star%20Nails%20y%20quiero%20una%20web%20para%20mi%20emprendimiento%20%F0%9F%99%8C" target="_blank" class="promo-boton">Quiero mi web</a>
+  </section>
+
   <div class="fondo-oscuro" id="fondoOscuro"></div>
 
   <aside class="carrito" id="carrito" aria-label="Carrito de compras">
@@ -202,6 +208,22 @@
       <button class="vaciar" id="vaciarCarrito">Vaciar carrito</button>
     </div>
   </aside>
+
+  <div class="visor" id="visor" aria-hidden="true">
+    <div class="visor-caja" role="dialog" aria-label="Fotos del producto">
+      <button class="cerrar visor-cerrar" id="cerrarVisor" aria-label="Cerrar fotos">✕</button>
+      <div class="visor-foto" id="visorFoto">
+        <button class="visor-flecha visor-izq" id="fotoAnterior" aria-label="Foto anterior">‹</button>
+        <img id="visorImagen" alt="">
+        <button class="visor-flecha visor-der" id="fotoSiguiente" aria-label="Foto siguiente">›</button>
+      </div>
+      <div class="visor-miniaturas" id="visorMiniaturas"></div>
+      <div class="visor-info">
+        <h3 id="visorNombre"></h3>
+        <p class="precio" id="visorPrecio"></p>
+      </div>
+    </div>
+  </div>
 
   <div class="aviso" id="aviso">Agregado al carrito</div>
 

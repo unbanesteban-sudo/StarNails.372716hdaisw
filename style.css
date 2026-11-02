@@ -417,6 +417,12 @@ select:focus-visible {
 
 .tarjeta-foto {
   position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
 }
 
 .tarjeta-foto img {
@@ -1322,51 +1328,112 @@ select:focus-visible {
   gap: 22px;
 }
 
-.campo-foto {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 2px dashed var(--tinta);
-  border-radius: 14px;
-  background: var(--rosa-fondo);
-  color: var(--gris);
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-}
-
-.campo-foto img {
-  display: none;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.campo-foto span {
-  position: relative;
-  padding: 10px;
-}
-
-.campo-foto img[style*="block"] + span {
-  margin-top: auto;
-  margin-bottom: 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--tinta);
-  color: var(--blanco);
-  font-size: 13px;
-}
-
-.campo-foto input {
+.campo-fotos input[type="file"],
+.ventana-fotos input[type="file"] {
   position: absolute;
   opacity: 0;
   width: 1px;
   height: 1px;
+}
+
+.fotos-elegidas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fotos-elegidas:empty {
+  display: none;
+}
+
+.foto-mini {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--tinta);
+  border-radius: 10px;
+}
+
+.foto-mini img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.foto-mini button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--tinta);
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--tinta);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.etiqueta-principal {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--rosa-fuerte);
+  color: var(--blanco);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.boton-subir-fotos {
+  display: block;
+  padding: 12px;
+  border: 2px dashed var(--tinta);
+  border-radius: 12px;
+  background: var(--rosa-fondo);
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.boton-subir-fotos:hover {
+  background: var(--rosa-suave);
+}
+
+.ayuda-fotos {
+  margin-top: 6px;
+  color: var(--gris);
+  font-size: 13px;
+  text-align: center;
+}
+
+.ventana-fotos {
+  padding: 22px;
+}
+
+.ventana-fotos h2 {
+  padding-right: 48px;
+  font-size: 22px;
+}
+
+.ventana-fotos .panel-ayuda {
+  margin: 6px 0 14px;
+  font-size: 14px;
+}
+
+.boton-fotos {
+  padding: 8px 12px;
+  border: 2px solid var(--tinta);
+  border-radius: 999px;
+  background: var(--blanco);
+  color: var(--tinta);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.boton-fotos:hover {
+  background: var(--rosa-suave);
 }
 
 .form-campos label {
@@ -1425,7 +1492,7 @@ select:focus-visible {
 }
 
 .fila-admin {
-  grid-template-columns: 56px 1fr auto auto auto;
+  grid-template-columns: 56px 1fr auto auto auto auto;
 }
 
 .boton-borrar {
@@ -1471,13 +1538,8 @@ select:focus-visible {
     gap: 16px;
   }
 
-  .campo-foto {
-    width: 60%;
-    margin: 0 auto;
-  }
-
   .fila-admin {
-    grid-template-columns: 56px 1fr auto;
+    grid-template-columns: 56px 1fr auto auto;
   }
 
   .fila-precio {
@@ -1555,4 +1617,173 @@ select:focus-visible {
 .verificacion .campo-con-boton button {
   background: var(--verde-wpp);
   color: #fff;
+}
+
+.contador-fotos {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(36, 21, 31, 0.8);
+  color: var(--blanco);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.visor {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(36, 21, 31, 0.75);
+}
+
+.visor.abierto {
+  display: flex;
+}
+
+.visor-caja {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 100%;
+  overflow-y: auto;
+  border: 2px solid var(--tinta);
+  border-radius: 20px;
+  background: var(--blanco);
+}
+
+.visor-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.visor-foto {
+  position: relative;
+  background: var(--rosa-fondo);
+}
+
+.visor-foto img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+}
+
+.visor-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--tinta);
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--tinta);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.visor-izq {
+  left: 12px;
+}
+
+.visor-der {
+  right: 12px;
+}
+
+.visor.una-foto .visor-flecha {
+  display: none;
+}
+
+.visor-miniaturas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 16px 0;
+}
+
+.visor-miniaturas:empty {
+  display: none;
+}
+
+.visor-miniaturas button {
+  flex-shrink: 0;
+  width: 56px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: none;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.visor-miniaturas button.activa {
+  border-color: var(--rosa-fuerte);
+  opacity: 1;
+}
+
+.visor-miniaturas img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.visor-info {
+  padding: 14px 16px 18px;
+  text-align: center;
+}
+
+.visor-info h3 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+@media (max-width: 800px) {
+  .visor {
+    padding: 12px;
+  }
+}
+
+.promo-web {
+  padding: 28px 24px 32px;
+  background: var(--tinta);
+  color: var(--blanco);
+  text-align: center;
+}
+
+.promo-titulo {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.promo-texto {
+  max-width: 52ch;
+  margin: 6px auto 16px;
+  color: #e6d3dc;
+  font-size: 14px;
+}
+
+.promo-boton {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 2px solid var(--rosa-suave);
+  border-radius: 999px;
+  color: var(--rosa-suave);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.promo-boton:hover {
+  background: var(--rosa-suave);
+  color: var(--tinta);
 }

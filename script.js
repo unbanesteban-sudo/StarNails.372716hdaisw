@@ -3,6 +3,7 @@ const WHATSAPP = "5492262510921";
 let categoriaActual = "Todos";
 let carrito = [];
 let productosNuevos = [];
+let fotosExtra = {};
 
 const grilla = document.getElementById("grilla");
 const barraCategorias = document.getElementById("categorias");
@@ -51,6 +52,17 @@ function hayStock(producto) {
   return producto.stock !== false && producto.oculto !== true;
 }
 
+function todasLasFotos(producto) {
+  const lista = [fotoDe(producto)];
+  const extras = fotosExtra[String(producto.id)];
+  if (extras) {
+    for (let i = 0; i < extras.length; i++) {
+      lista.push(extras[i]);
+    }
+  }
+  return lista;
+}
+
 function fotoDe(producto) {
   if (producto.imagen) {
     return producto.imagen;
@@ -95,6 +107,19 @@ function escucharCambios() {
     },
     function (error) {
       console.log("No se pudieron leer los cambios:", error);
+    }
+  );
+
+  db.collection("fotos").onSnapshot(
+    function (resultado) {
+      fotosExtra = {};
+      resultado.forEach(function (documento) {
+        fotosExtra[documento.id] = documento.data().lista || [];
+      });
+      mostrarProductos();
+    },
+    function (error) {
+      console.log("No se pudieron leer las fotos:", error);
     }
   );
 
@@ -265,13 +290,20 @@ function mostrarProductos() {
       etiquetaHTML = '<span class="nuevo-etiqueta">Nuevo</span>';
     }
 
+    const cantidadFotos = todasLasFotos(p).length;
+    let contadorFotosHTML = "";
+    if (cantidadFotos > 1) {
+      contadorFotosHTML = '<span class="contador-fotos">📷 ' + cantidadFotos + "</span>";
+    }
+
     const tarjeta = document.createElement("article");
     tarjeta.className = "tarjeta";
     tarjeta.innerHTML =
-      '<div class="tarjeta-foto">' +
+      "<button class=\"tarjeta-foto\" onclick=\"abrirVisor('" + p.id + "')\" aria-label=\"Ver fotos de " + p.nombre + "\">" +
         '<img src="' + fotoDe(p) + '" alt="' + p.nombre + '" loading="lazy">' +
         etiquetaHTML +
-      "</div>" +
+        contadorFotosHTML +
+      "</button>" +
       '<div class="tarjeta-info">' +
         chipHTML +
         "<h3>" + p.nombre + "</h3>" +
@@ -694,9 +726,94 @@ buscador.oninput = function () {
   mostrarProductos();
 };
 
+const visor = document.getElementById("visor");
+const visorImagen = document.getElementById("visorImagen");
+const visorMiniaturas = document.getElementById("visorMiniaturas");
+const visorFoto = document.getElementById("visorFoto");
+let fotosVisor = [];
+let fotoActual = 0;
+let inicioToque = 0;
+
+function abrirVisor(id) {
+  const producto = buscarProducto(id);
+  fotosVisor = todasLasFotos(producto);
+
+  document.getElementById("visorNombre").textContent = producto.nombre;
+  document.getElementById("visorPrecio").textContent = formatoPrecio(producto.precio);
+
+  visorMiniaturas.innerHTML = "";
+  if (fotosVisor.length > 1) {
+    for (let i = 0; i < fotosVisor.length; i++) {
+      visorMiniaturas.innerHTML += '<button onclick="mostrarFoto(' + i + ')" aria-label="Foto ' + (i + 1) + '"><img src="' + fotosVisor[i] + '" alt=""></button>';
+    }
+  }
+
+  visor.classList.toggle("una-foto", fotosVisor.length === 1);
+  mostrarFoto(0);
+  visor.classList.add("abierto");
+  visor.setAttribute("aria-hidden", "false");
+}
+
+function mostrarFoto(numero) {
+  if (numero < 0) {
+    numero = fotosVisor.length - 1;
+  }
+  if (numero >= fotosVisor.length) {
+    numero = 0;
+  }
+  fotoActual = numero;
+  visorImagen.src = fotosVisor[fotoActual];
+
+  const miniaturas = visorMiniaturas.querySelectorAll("button");
+  for (let i = 0; i < miniaturas.length; i++) {
+    miniaturas[i].classList.toggle("activa", i === fotoActual);
+  }
+}
+
+function cerrarVisor() {
+  visor.classList.remove("abierto");
+  visor.setAttribute("aria-hidden", "true");
+}
+
+document.getElementById("cerrarVisor").onclick = cerrarVisor;
+document.getElementById("fotoAnterior").onclick = function () {
+  mostrarFoto(fotoActual - 1);
+};
+document.getElementById("fotoSiguiente").onclick = function () {
+  mostrarFoto(fotoActual + 1);
+};
+
+visor.onclick = function (evento) {
+  if (evento.target === visor) {
+    cerrarVisor();
+  }
+};
+
+visorFoto.addEventListener("touchstart", function (evento) {
+  inicioToque = evento.touches[0].clientX;
+});
+
+visorFoto.addEventListener("touchend", function (evento) {
+  const distancia = evento.changedTouches[0].clientX - inicioToque;
+  if (distancia > 50) {
+    mostrarFoto(fotoActual - 1);
+  } else if (distancia < -50) {
+    mostrarFoto(fotoActual + 1);
+  }
+});
+
 document.addEventListener("keydown", function (evento) {
   if (evento.key === "Escape") {
     cerrarPaneles();
+    cerrarVisor();
+  }
+  if (visor.classList.contains("abierto")) {
+    if (evento.key === "ArrowLeft") {
+      mostrarFoto(fotoActual - 1);
+    }
+    if (evento.key === "ArrowRight") {
+      mostrarFoto(fotoActual + 1);
+    }
   }
 });
 
