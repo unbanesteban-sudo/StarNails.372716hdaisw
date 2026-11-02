@@ -19,6 +19,14 @@ const contador = document.getElementById("contador");
 const totalTexto = document.getElementById("total");
 const aviso = document.getElementById("aviso");
 
+function arreglarPrecio(precio) {
+  let numero = Number(precio);
+  if (numero > 0 && numero < 100) {
+    numero = numero * 1000;
+  }
+  return Math.round(numero);
+}
+
 function formatoPrecio(numero) {
   return "$" + numero.toLocaleString("es-AR");
 }
@@ -139,7 +147,7 @@ function aplicarCambios(cambios) {
 
     if (cambio) {
       if (cambio.precio !== undefined) {
-        productos[i].precio = cambio.precio;
+        productos[i].precio = arreglarPrecio(cambio.precio);
       }
       if (cambio.stock !== undefined) {
         productos[i].stock = cambio.stock;
@@ -164,7 +172,7 @@ function cargarProductosNuevos(resultado) {
       id: "n-" + documento.id,
       nombre: datos.nombre,
       categoria: datos.categoria,
-      precio: datos.precio,
+      precio: arreglarPrecio(datos.precio),
       imagen: datos.imagen,
       nota: datos.nota,
       opciones: datos.opciones,

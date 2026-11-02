@@ -40,6 +40,20 @@ const MAXIMO_FOTOS = 6;
 let db;
 let auth;
 
+function arreglarPrecio(precio) {
+  let numero = Number(precio);
+  if (numero > 0 && numero < 100) {
+    numero = numero * 1000;
+  }
+  return Math.round(numero);
+}
+
+function leerPrecio(texto) {
+  const parteEntera = String(texto).split(",")[0];
+  const soloNumeros = parteEntera.replace(/[^0-9]/g, "");
+  return Number(soloNumeros);
+}
+
 function formatoPrecio(numero) {
   return "$" + numero.toLocaleString("es-AR");
 }
@@ -71,11 +85,11 @@ function fotoDe(producto) {
 
 function precioActual(producto) {
   if (producto.nuevo) {
-    return producto.precio;
+    return arreglarPrecio(producto.precio);
   }
   const cambio = estado[producto.id];
   if (cambio && cambio.precio !== undefined) {
-    return cambio.precio;
+    return arreglarPrecio(cambio.precio);
   }
   return producto.precio;
 }
@@ -219,7 +233,7 @@ function cambiarStock(id, conStock) {
 
 function guardarPrecio(id) {
   const producto = buscarProducto(id);
-  const nuevoPrecio = Number(document.getElementById("precio-" + id).value);
+  const nuevoPrecio = leerPrecio(document.getElementById("precio-" + id).value);
 
   if (!nuevoPrecio || nuevoPrecio <= 0) {
     mostrarAviso("Escribí un precio válido");
@@ -373,7 +387,7 @@ function mostrarLista() {
       controlesHTML =
         '<div class="fila-precio">' +
           "<span>$</span>" +
-          '<input type="number" id="precio-' + p.id + '" value="' + precioActual(p) + '" min="1" aria-label="Precio de ' + p.nombre + '">' +
+          '<input type="text" inputmode="numeric" id="precio-' + p.id + '" value="' + precioActual(p) + '" aria-label="Precio de ' + p.nombre + '">' +
           "<button onclick=\"guardarPrecio('" + p.id + "')\">Guardar</button>" +
         "</div>" +
         '<label class="interruptor">' +
@@ -649,7 +663,7 @@ formProducto.onsubmit = function (evento) {
   evento.preventDefault();
 
   const nombre = nombreProducto.value.trim();
-  const precio = Number(precioProducto.value);
+  const precio = leerPrecio(precioProducto.value);
   const nota = notaProducto.value.trim();
 
   let categoria = categoriaProducto.value;
