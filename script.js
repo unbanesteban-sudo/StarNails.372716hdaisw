@@ -118,6 +118,19 @@ function escucharCambios() {
     }
   );
 
+  db.collection("tienda").doc("portada").onSnapshot(
+    function (documento) {
+      if (documento.exists && documento.data().slides && documento.data().slides.length > 0) {
+        armarCarrusel(documento.data().slides);
+      } else {
+        armarCarrusel(portadaOriginal);
+      }
+    },
+    function (error) {
+      console.log("No se pudo leer la portada:", error);
+    }
+  );
+
   db.collection("fotos").onSnapshot(
     function (resultado) {
       fotosExtra = {};
@@ -334,12 +347,83 @@ function mostrarProductos() {
   }
 }
 
-const slides = document.querySelectorAll(".slide");
-const puntos = document.querySelectorAll(".punto");
+const pista = document.getElementById("pista");
+const contenedorPuntos = document.getElementById("puntos");
+let slides = [];
+let puntos = [];
 let slideActual = 0;
 let temporizador;
 
+function limpiarTexto(texto) {
+  return String(texto || "")
+    .split("&").join("&amp;")
+    .split("<").join("&lt;")
+    .split(">").join("&gt;")
+    .split('"').join("&quot;");
+}
+
+function textoBoton(categoria) {
+  if (categoria === "Todos") {
+    return "Ver todo";
+  }
+  return "Ver " + categoria.toLowerCase();
+}
+
+function htmlEtiqueta(slide, esVistaPrevia) {
+  if (slide.estilo === "ninguna") {
+    return "";
+  }
+  if (!slide.titulo && !slide.texto && !slide.categoria) {
+    return "";
+  }
+
+  let html = '<div class="slide-texto estilo-' + (slide.estilo || "rosa") + " pos-" + (slide.posicion || "izquierda") + '">';
+  if (slide.titulo) {
+    html += "<h2>" + limpiarTexto(slide.titulo) + "</h2>";
+  }
+  if (slide.texto) {
+    html += "<p>" + limpiarTexto(slide.texto) + "</p>";
+  }
+  if (slide.categoria) {
+    if (esVistaPrevia) {
+      html += '<span class="boton-slide">' + limpiarTexto(textoBoton(slide.categoria)) + "</span>";
+    } else {
+      const categoria = limpiarTexto(slide.categoria).split("'").join("\\'");
+      html += "<button class=\"boton-slide\" onclick=\"elegirCategoria('" + categoria + "')\">" + limpiarTexto(textoBoton(slide.categoria)) + "</button>";
+    }
+  }
+  html += "</div>";
+  return html;
+}
+
+function htmlSlide(slide, esVistaPrevia) {
+  return '<div class="slide">' +
+    '<img src="' + slide.imagen + '" alt="" class="slide-fondo">' +
+    '<img src="' + slide.imagen + '" alt="' + limpiarTexto(slide.titulo) + '" class="slide-foto">' +
+    htmlEtiqueta(slide, esVistaPrevia) +
+    "</div>";
+}
+
+function armarCarrusel(lista) {
+  let htmlSlides = "";
+  let htmlPuntos = "";
+
+  for (let i = 0; i < lista.length; i++) {
+    htmlSlides += htmlSlide(lista[i], false);
+    htmlPuntos += '<button class="punto" onclick="irASlide(' + i + ')" aria-label="Foto ' + (i + 1) + '"></button>';
+  }
+
+  pista.innerHTML = htmlSlides;
+  contenedorPuntos.innerHTML = lista.length > 1 ? htmlPuntos : "";
+  slides = pista.querySelectorAll(".slide");
+  puntos = contenedorPuntos.querySelectorAll(".punto");
+  irASlide(0);
+}
+
 function irASlide(numero) {
+  if (slides.length === 0) {
+    return;
+  }
   slideActual = numero;
 
   for (let i = 0; i < slides.length; i++) {
@@ -347,12 +431,13 @@ function irASlide(numero) {
   }
 
   for (let i = 0; i < puntos.length; i++) {
-    puntos[i].classList.remove("activo");
+    puntos[i].classList.toggle("activo", i === slideActual);
   }
-  puntos[slideActual].classList.add("activo");
 
   clearInterval(temporizador);
-  temporizador = setInterval(siguienteSlide, 3000);
+  if (slides.length > 1) {
+    temporizador = setInterval(siguienteSlide, 3000);
+  }
 }
 
 function siguienteSlide() {
@@ -828,5 +913,5 @@ document.addEventListener("keydown", function (evento) {
 cargarCarrito();
 cargarDatosCliente();
 refrescar();
-irASlide(0);
+armarCarrusel(portadaOriginal);
 escucharCambios();

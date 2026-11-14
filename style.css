@@ -303,7 +303,8 @@ select:focus-visible {
   font-weight: 500;
 }
 
-.slide-texto button {
+.slide-texto .boton-slide {
+  display: inline-block;
   padding: 8px 18px;
   border: 2px solid var(--tinta);
   border-radius: 999px;
@@ -312,7 +313,7 @@ select:focus-visible {
   font-weight: 700;
 }
 
-.slide-texto button:hover {
+.slide-texto .boton-slide:hover {
   background: var(--rosa-oscuro);
 }
 
@@ -1786,4 +1787,220 @@ select:focus-visible {
 .promo-boton:hover {
   background: var(--rosa-suave);
   color: var(--tinta);
+}
+
+.slide-texto.estilo-blanca {
+  background: var(--blanco);
+}
+
+.slide-texto.estilo-negra {
+  background: var(--tinta);
+  color: var(--blanco);
+  box-shadow: 5px 5px 0 var(--rosa-fuerte);
+}
+
+.slide-texto.estilo-negra p {
+  color: #e6d3dc;
+}
+
+.slide-texto.estilo-negra .boton-slide {
+  border-color: var(--rosa-suave);
+}
+
+.slide-texto.pos-centro {
+  left: 50%;
+  text-align: center;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+.slide-texto.pos-derecha {
+  left: auto;
+  right: 32px;
+  transform: rotate(2deg);
+}
+
+@media (max-width: 800px) {
+  .slide-texto.pos-centro,
+  .slide-texto.pos-derecha {
+    left: 14px;
+    right: 14px;
+    transform: rotate(-2deg);
+  }
+}
+
+.panel-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.panel-acciones .boton-nuevo-producto {
+  margin-bottom: 0;
+}
+
+.editor-portada {
+  display: none;
+  margin-bottom: 28px;
+  padding: 22px;
+  border: 2px solid var(--tinta);
+  border-radius: 18px;
+  background: var(--blanco);
+  box-shadow: 5px 5px 0 var(--tinta);
+}
+
+.editor-portada h2 {
+  font-size: 26px;
+}
+
+.editor-portada > .panel-ayuda {
+  margin: 6px 0 18px;
+}
+
+.editor-portada input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+#agregarSlide {
+  margin-bottom: 16px;
+}
+
+.slide-editor {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 2px dashed var(--rosa-suave);
+}
+
+.vista-portada {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  border: 2px solid var(--tinta);
+  border-radius: 14px;
+}
+
+.vista-portada .slide {
+  height: 100%;
+  transition: none;
+}
+
+.vista-portada .slide-texto {
+  left: 12px;
+  right: auto;
+  bottom: 12px;
+  max-width: 62%;
+  padding: 8px 12px;
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+
+.vista-portada .slide-texto.estilo-negra {
+  box-shadow: 3px 3px 0 var(--rosa-fuerte);
+}
+
+.vista-portada .slide-texto.pos-centro {
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+.vista-portada .slide-texto.pos-derecha {
+  left: auto;
+  right: 12px;
+  transform: rotate(2deg);
+}
+
+.vista-portada .slide-texto h2 {
+  font-size: 17px;
+}
+
+.vista-portada .slide-texto p {
+  margin: 2px 0 6px;
+  font-size: 12px;
+}
+
+.vista-portada .boton-slide {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.slide-orden {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.slide-orden div {
+  display: flex;
+  gap: 6px;
+}
+
+.slide-orden button {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--tinta);
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--tinta);
+  font-weight: 700;
+}
+
+.slide-orden button:disabled {
+  opacity: 0.3;
+}
+
+.boton-cambiar-foto {
+  margin-bottom: 14px;
+  padding: 9px;
+}
+
+.campo-titulo {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border: 2px solid var(--tinta);
+  border-radius: 999px;
+  background: var(--blanco);
+  color: var(--tinta);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.chip.activa {
+  background: var(--tinta);
+  color: var(--blanco);
+}
+
+@media (max-width: 700px) {
+  .editor-portada {
+    padding: 16px;
+  }
+
+  .slide-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .vista-portada {
+    height: 220px;
+  }
+
+  .boton-nuevo-producto {
+    font-size: 15px;
+  }
 }

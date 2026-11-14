@@ -108,3 +108,11 @@ const categorias = [
   "Descartables",
   "Equipos"
 ];
+
+const portadaOriginal = [
+  { imagen: "img/esmaltes-meline.jpg", titulo: "Esmaltes Meline", texto: "19 colores para elegir", categoria: "Esmaltes", estilo: "rosa", posicion: "izquierda" },
+  { imagen: "img/tips-paris-prelimados.jpg", titulo: "Tips Paris Night", texto: "Almendra, stiletto y cuadrado", categoria: "Tips", estilo: "rosa", posicion: "izquierda" },
+  { imagen: "img/esmaltes-rimera.jpg", titulo: "Rimera Cat Eyes", texto: "Efecto ojo de gato", categoria: "Esmaltes", estilo: "rosa", posicion: "izquierda" },
+  { imagen: "img/torno.jpg", titulo: "Torno inalámbrico", texto: "Y todo para tu mesa de trabajo", categoria: "Equipos", estilo: "rosa", posicion: "izquierda" },
+  { imagen: "img/mix-caviar-perla.jpg", titulo: "Decoración", texto: "Caviar, strass y polvos", categoria: "Decoración", estilo: "rosa", posicion: "izquierda" }
+];

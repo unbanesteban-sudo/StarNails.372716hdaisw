@@ -437,6 +437,7 @@ tipoOpcionProducto.onchange = function () {
 };
 
 abrirFormulario.onclick = function () {
+  editorPortada.style.display = "none";
   limpiarFormulario();
   formProducto.style.display = "block";
   abrirFormulario.style.display = "none";
@@ -739,6 +740,246 @@ formProducto.onsubmit = function (evento) {
     .finally(function () {
       guardarProducto.disabled = false;
       guardarProducto.textContent = "Guardar producto";
+    });
+};
+
+const editorPortada = document.getElementById("editorPortada");
+const listaSlides = document.getElementById("listaSlides");
+const abrirPortada = document.getElementById("abrirPortada");
+const fotoSlideNueva = document.getElementById("fotoSlideNueva");
+const agregarSlide = document.getElementById("agregarSlide");
+const guardarPortada = document.getElementById("guardarPortada");
+const MAXIMO_SLIDES = 6;
+let slidesEditados = [];
+
+function copiarSlides(lista) {
+  return JSON.parse(JSON.stringify(lista));
+}
+
+function limpiarTexto(texto) {
+  return String(texto || "")
+    .split("&").join("&amp;")
+    .split("<").join("&lt;")
+    .split(">").join("&gt;")
+    .split('"').join("&quot;");
+}
+
+function textoBoton(categoria) {
+  if (categoria === "Todos") {
+    return "Ver todo";
+  }
+  return "Ver " + categoria.toLowerCase();
+}
+
+function htmlSlide(slide) {
+  let etiqueta = "";
+
+  if (slide.estilo !== "ninguna" && (slide.titulo || slide.texto || slide.categoria)) {
+    etiqueta = '<div class="slide-texto estilo-' + (slide.estilo || "rosa") + " pos-" + (slide.posicion || "izquierda") + '">';
+    if (slide.titulo) {
+      etiqueta += "<h2>" + limpiarTexto(slide.titulo) + "</h2>";
+    }
+    if (slide.texto) {
+      etiqueta += "<p>" + limpiarTexto(slide.texto) + "</p>";
+    }
+    if (slide.categoria) {
+      etiqueta += '<span class="boton-slide">' + limpiarTexto(textoBoton(slide.categoria)) + "</span>";
+    }
+    etiqueta += "</div>";
+  }
+
+  return '<div class="slide">' +
+    '<img src="' + slide.imagen + '" alt="" class="slide-fondo">' +
+    '<img src="' + slide.imagen + '" alt="" class="slide-foto">' +
+    etiqueta +
+    "</div>";
+}
+
+function opcionesBoton(elegida) {
+  const lista = ["Todos"].concat(categoriasActuales());
+  let html = '<option value="">Sin botón</option>';
+
+  for (let i = 0; i < lista.length; i++) {
+    const nombre = lista[i] === "Todos" ? "Todos los productos" : lista[i];
+    html += '<option value="' + limpiarTexto(lista[i]) + '"' + (lista[i] === elegida ? " selected" : "") + ">" + limpiarTexto(nombre) + "</option>";
+  }
+  return html;
+}
+
+function botonesDiseno(numero, campo, opciones, actual) {
+  let html = '<div class="chips">';
+  for (let i = 0; i < opciones.length; i++) {
+    const valor = opciones[i][0];
+    const texto = opciones[i][1];
+    html += '<button type="button" class="chip' + (valor === actual ? " activa" : "") + '" onclick="cambiarDiseno(' + numero + ", '" + campo + "', '" + valor + "')\">" + texto + "</button>";
+  }
+  return html + "</div>";
+}
+
+function htmlEditorSlide(slide, numero) {
+  const total = slidesEditados.length;
+
+  return '<div class="slide-editor">' +
+    '<div class="vista-portada" id="vista-' + numero + '">' + htmlSlide(slide) + "</div>" +
+    '<div class="form-campos slide-campos">' +
+      '<div class="slide-orden">' +
+        "<strong>Foto " + (numero + 1) + " de " + total + "</strong>" +
+        "<div>" +
+          '<button type="button" onclick="moverSlide(' + numero + ', -1)" aria-label="Subir"' + (numero === 0 ? " disabled" : "") + ">↑</button>" +
+          '<button type="button" onclick="moverSlide(' + numero + ', 1)" aria-label="Bajar"' + (numero === total - 1 ? " disabled" : "") + ">↓</button>" +
+          '<button type="button" onclick="borrarSlide(' + numero + ')" aria-label="Sacar de la portada">🗑</button>' +
+        "</div>" +
+      "</div>" +
+      '<label class="boton-subir-fotos boton-cambiar-foto" for="fotoSlide-' + numero + '">📷 Cambiar foto</label>' +
+      '<input type="file" id="fotoSlide-' + numero + '" accept="image/*" onchange="cambiarFotoSlide(' + numero + ', this)">' +
+      '<label for="titulo-' + numero + '">Título</label>' +
+      '<input type="text" id="titulo-' + numero + '" maxlength="40" placeholder="Ej: Llegaron los Meline" value="' + limpiarTexto(slide.titulo) + '" oninput="editarSlide(' + numero + ", 'titulo', this.value)\">" +
+      '<label for="texto-' + numero + '">Texto chico <small>(opcional)</small></label>' +
+      '<input type="text" id="texto-' + numero + '" maxlength="60" placeholder="Ej: 19 colores para elegir" value="' + limpiarTexto(slide.texto) + '" oninput="editarSlide(' + numero + ", 'texto', this.value)\">" +
+      '<label for="boton-' + numero + '">El botón lleva a</label>' +
+      '<select id="boton-' + numero + '" onchange="editarSlide(' + numero + ", 'categoria', this.value)\">" + opcionesBoton(slide.categoria) + "</select>" +
+      '<p class="campo-titulo">Diseño de la etiqueta</p>' +
+      botonesDiseno(numero, "estilo", [["rosa", "Rosa"], ["blanca", "Blanca"], ["negra", "Negra"], ["ninguna", "Sin etiqueta"]], slide.estilo || "rosa") +
+      '<p class="campo-titulo">Posición</p>' +
+      botonesDiseno(numero, "posicion", [["izquierda", "Izquierda"], ["centro", "Centro"], ["derecha", "Derecha"]], slide.posicion || "izquierda") +
+    "</div>" +
+  "</div>";
+}
+
+function mostrarSlides() {
+  let html = "";
+  for (let i = 0; i < slidesEditados.length; i++) {
+    html += htmlEditorSlide(slidesEditados[i], i);
+  }
+  listaSlides.innerHTML = html;
+  agregarSlide.style.display = slidesEditados.length >= MAXIMO_SLIDES ? "none" : "block";
+}
+
+function editarSlide(numero, campo, valor) {
+  slidesEditados[numero][campo] = valor;
+  document.getElementById("vista-" + numero).innerHTML = htmlSlide(slidesEditados[numero]);
+}
+
+function cambiarDiseno(numero, campo, valor) {
+  slidesEditados[numero][campo] = valor;
+  mostrarSlides();
+}
+
+function moverSlide(numero, direccion) {
+  const destino = numero + direccion;
+  if (destino < 0 || destino >= slidesEditados.length) {
+    return;
+  }
+  const guardado = slidesEditados[numero];
+  slidesEditados[numero] = slidesEditados[destino];
+  slidesEditados[destino] = guardado;
+  mostrarSlides();
+}
+
+function borrarSlide(numero) {
+  if (slidesEditados.length === 1) {
+    mostrarAviso("La portada necesita al menos una foto");
+    return;
+  }
+  if (!confirm("¿Sacar esta foto de la portada?")) {
+    return;
+  }
+  slidesEditados.splice(numero, 1);
+  mostrarSlides();
+}
+
+function cambiarFotoSlide(numero, campo) {
+  leerFotos(campo.files, function (nuevas) {
+    if (nuevas.length > 0) {
+      slidesEditados[numero].imagen = nuevas[0];
+      mostrarSlides();
+    }
+  });
+}
+
+fotoSlideNueva.onchange = function () {
+  leerFotos(fotoSlideNueva.files, function (nuevas) {
+    fotoSlideNueva.value = "";
+    if (nuevas.length === 0) {
+      return;
+    }
+    slidesEditados.push({
+      imagen: nuevas[0],
+      titulo: "",
+      texto: "",
+      categoria: "",
+      estilo: "rosa",
+      posicion: "izquierda"
+    });
+    mostrarSlides();
+    listaSlides.lastElementChild.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+};
+
+abrirPortada.onclick = function () {
+  formProducto.style.display = "none";
+  abrirFormulario.style.display = "block";
+  editorPortada.style.display = "block";
+  listaSlides.innerHTML = '<p class="panel-ayuda">Cargando portada...</p>';
+
+  db.collection("tienda").doc("portada").get()
+    .then(function (documento) {
+      if (documento.exists && documento.data().slides && documento.data().slides.length > 0) {
+        slidesEditados = copiarSlides(documento.data().slides);
+      } else {
+        slidesEditados = copiarSlides(portadaOriginal);
+      }
+      mostrarSlides();
+      editorPortada.scrollIntoView({ behavior: "smooth" });
+    })
+    .catch(function (error) {
+      console.log(error);
+      listaSlides.innerHTML = '<p class="panel-ayuda">No se pudo cargar la portada. Recargá la página.</p>';
+    });
+};
+
+document.getElementById("cancelarPortada").onclick = function () {
+  editorPortada.style.display = "none";
+};
+
+guardarPortada.onclick = function () {
+  if (JSON.stringify(slidesEditados).length > 950000) {
+    mostrarAviso("La portada pesa mucho. Probá con menos fotos.");
+    return;
+  }
+
+  guardarPortada.disabled = true;
+  guardarPortada.textContent = "Guardando...";
+
+  db.collection("tienda").doc("portada").set({ slides: slidesEditados, actualizado: Date.now() })
+    .then(function () {
+      mostrarAviso("Portada guardada ✓ Ya se ve en la tienda");
+      editorPortada.style.display = "none";
+    })
+    .catch(function (error) {
+      console.log(error);
+      mostrarAviso("No se pudo guardar. Revisá la conexión.");
+    })
+    .finally(function () {
+      guardarPortada.disabled = false;
+      guardarPortada.textContent = "Guardar portada";
+    });
+};
+
+document.getElementById("portadaOriginalBoton").onclick = function () {
+  if (!confirm("¿Volver a la portada original? Se pierden los cambios que hiciste en la portada.")) {
+    return;
+  }
+
+  db.collection("tienda").doc("portada").delete()
+    .then(function () {
+      slidesEditados = copiarSlides(portadaOriginal);
+      mostrarSlides();
+      mostrarAviso("Volvió la portada original ✓");
+    })
+    .catch(function (error) {
+      console.log(error);
+      mostrarAviso("No se pudo cambiar. Revisá la conexión.");
     });
 };
 

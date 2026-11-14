@@ -43,7 +43,23 @@
 
   <main class="panel" id="panel">
 
-    <button class="boton-nuevo-producto" id="abrirFormulario">+ Agregar producto</button>
+    <div class="panel-acciones">
+      <button class="boton-nuevo-producto" id="abrirFormulario">+ Agregar producto</button>
+      <button class="boton-nuevo-producto" id="abrirPortada">🖼️ Editar portada</button>
+    </div>
+
+    <section class="editor-portada" id="editorPortada">
+      <h2>Portada de la tienda</h2>
+      <p class="panel-ayuda">Son las fotos que pasan arriba de todo en la tienda. Cambiá lo que quieras y tocá "Guardar portada". En el celu la etiqueta se ve abajo, a lo ancho.</p>
+      <div id="listaSlides"></div>
+      <label class="boton-subir-fotos" id="agregarSlide" for="fotoSlideNueva">+ Agregar otra foto a la portada</label>
+      <input type="file" id="fotoSlideNueva" accept="image/*">
+      <div class="form-botones">
+        <button type="button" class="boton-cancelar" id="cancelarPortada">Cancelar</button>
+        <button type="button" class="boton-rosa-ancho" id="guardarPortada">Guardar portada</button>
+      </div>
+      <button type="button" class="vaciar" id="portadaOriginalBoton">Volver a la portada original</button>
+    </section>
 
     <form class="form-producto" id="formProducto">
       <h2>Producto nuevo</h2>
