@@ -249,6 +249,27 @@ select:focus-visible {
   border-radius: 24px;
 }
 
+.carrusel-pista.cargando {
+  height: 460px;
+  background: var(--rosa-suave);
+  animation: latido 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes latido {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel-pista.cargando {
+    animation: none;
+  }
+}
+
 .slide {
   position: relative;
   flex: 0 0 100%;
@@ -856,6 +877,10 @@ select:focus-visible {
 
   .carrusel-pista {
     border-radius: 18px;
+  }
+
+  .carrusel-pista.cargando {
+    height: 400px;
   }
 
   .slide {

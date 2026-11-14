@@ -121,13 +121,16 @@ function escucharCambios() {
   db.collection("tienda").doc("portada").onSnapshot(
     function (documento) {
       if (documento.exists && documento.data().slides && documento.data().slides.length > 0) {
-        armarCarrusel(documento.data().slides);
+        mostrarPortada(documento.data().slides, true);
       } else {
-        armarCarrusel(portadaOriginal);
+        mostrarPortada(portadaOriginal, false);
       }
     },
     function (error) {
       console.log("No se pudo leer la portada:", error);
+      if (slides.length === 0) {
+        mostrarPortada(portadaOriginal, false);
+      }
     }
   );
 
@@ -404,7 +407,55 @@ function htmlSlide(slide, esVistaPrevia) {
     "</div>";
 }
 
+let portadaActual = "";
+
+function mostrarPortada(lista, esPersonalizada) {
+  const texto = JSON.stringify(lista);
+  if (texto === portadaActual) {
+    return;
+  }
+  portadaActual = texto;
+  armarCarrusel(lista);
+
+  try {
+    if (esPersonalizada) {
+      localStorage.setItem("portadaStarNails", texto);
+    } else {
+      localStorage.removeItem("portadaStarNails");
+    }
+  } catch (error) {
+    console.log("No se pudo recordar la portada");
+  }
+}
+
+function mostrarPortadaInicial() {
+  let guardada = null;
+  try {
+    guardada = JSON.parse(localStorage.getItem("portadaStarNails"));
+  } catch (error) {
+    guardada = null;
+  }
+
+  if (guardada && guardada.length > 0) {
+    mostrarPortada(guardada, true);
+    return;
+  }
+
+  if (typeof firebase === "undefined" || firebaseConfig.apiKey === "PEGAR_ACA") {
+    mostrarPortada(portadaOriginal, false);
+    return;
+  }
+
+  pista.classList.add("cargando");
+  setTimeout(function () {
+    if (slides.length === 0) {
+      mostrarPortada(portadaOriginal, false);
+    }
+  }, 6000);
+}
+
 function armarCarrusel(lista) {
+  pista.classList.remove("cargando");
   let htmlSlides = "";
   let htmlPuntos = "";
 
@@ -913,5 +964,5 @@ document.addEventListener("keydown", function (evento) {
 cargarCarrito();
 cargarDatosCliente();
 refrescar();
-armarCarrusel(portadaOriginal);
+mostrarPortadaInicial();
 escucharCambios();
